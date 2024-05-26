@@ -1,0 +1,12 @@
+{% extends 'main/base.html'%}
+{% block content %}
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">Материал "{{ object.title }}"</h5>
+        <p class="card-text">{{ object.slug }}</p>
+        <p class="card-text">{{ object.body }}</p>
+        <p class="card-text">Просмотры: {{ object.views_count }}</p>
+    </div>
+</div>
+
+{% endblock %}
