@@ -4,3 +4,4 @@ pillow
 ipython
 Django-stubs
 pytils
+django-dump-load-utf8
