@@ -11,10 +11,13 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from config.config import PASSWORD
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -83,7 +86,7 @@ DATABASES = {
         'USER': 'postgres',
         'HOST': '127.0.0.1',
         'PORT': 5432,
-        'PASSWORD': PASSWORD
+        'PASSWORD': os.getenv('PASSWORD')
     }
 }
 
@@ -138,3 +141,13 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/users/'
+
+
+CACHE_ENABLED = os.getenv('CACHE_ENABLED') == 'True'
+if CACHE_ENABLED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.getenv('CACHE_LOCATION'),
+        }
+    }

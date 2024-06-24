@@ -7,6 +7,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from main.forms import StudentsForm, SubjectForm
 from main.models import Students, Subject
+from main.services import get_cached_subjects_for_students
 
 
 class StudentListView(LoginRequiredMixin, ListView):
@@ -19,7 +20,8 @@ class StudentListView(LoginRequiredMixin, ListView):
 #         'object_list': students_list,
 #         'title': 'Главная'
 #         }
-#     return render(request, 'main/index.html', context)
+#     return render(request, 'main/students_list.html', context)
+
 
 @login_required
 def contact(request):
@@ -38,6 +40,11 @@ def contact(request):
 class StudentDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Students
     permission_required = 'main.view_students'
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['subjects'] = get_cached_subjects_for_students(self.object.pk)
+        return context_data
 
 
 class StudentCreateView(LoginRequiredMixin, PermissionRequiredMixin,  CreateView):

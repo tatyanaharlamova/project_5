@@ -1,14 +1,16 @@
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 from main.apps import MainConfig
-from main.views import (contact, StudentListView, StudentDetailView, StudentCreateView, StudentUpdateView,
-                        StudentDeleteView, toggle_activity)
+from main.views import (contact, StudentDetailView, StudentCreateView, StudentUpdateView,
+                        StudentDeleteView, toggle_activity, StudentListView)
 
 app_name = MainConfig.name
 
 urlpatterns = [
     path("", StudentListView.as_view(), name='index'),
     path("contact/", contact,  name='contact'),
+    # path("", cache_page(60)(index), name='index'),
     # path('view/<int:pk>/', view_student, name='student_detail'),
     path('view/<int:pk>/', StudentDetailView.as_view(), name='student_detail'),
     path('create/', StudentCreateView.as_view(), name='create_student'),
