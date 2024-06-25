@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.core.cache import cache
 from django.forms import inlineformset_factory
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
@@ -10,17 +12,17 @@ from main.models import Students, Subject
 from main.services import get_cached_subjects_for_students
 
 
-class StudentListView(LoginRequiredMixin, ListView):
-    model = Students
+# class StudentListView(LoginRequiredMixin, ListView):
+#     model = Students
 
 
-# def index(request):
-#     students_list = Students.objects.all()
-#     context = {
-#         'object_list': students_list,
-#         'title': 'Главная'
-#         }
-#     return render(request, 'main/students_list.html', context)
+def index(request):
+    students_list = Students.objects.all()
+    context = {
+        'object_list': students_list,
+        'title': 'Главная'
+        }
+    return render(request, 'main/students_list.html', context)
 
 
 @login_required
@@ -43,6 +45,14 @@ class StudentDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
+        # if settings.CACHE_ENABLED:
+        #     key = f'subject_list_{self.object.pk}'
+        #     subject_list = cache.get(key)
+        #     if subject_list is None:
+        #         subject_list = self.object.subject_set.all()
+        #         cache.set(key, subject_list)
+        # else:
+        #     subject_list = self.object.subject_set.all()
         context_data['subjects'] = get_cached_subjects_for_students(self.object.pk)
         return context_data
 
